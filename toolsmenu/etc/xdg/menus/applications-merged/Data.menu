@@ -1,0 +1,12 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<Menu>
+	<Name>Xfce</Name>
+	<Menu>
+	<Name>02 - Data Tools</Name>
+		<Directory>data.directory</Directory>
+		<Include>
+			<Category>data</Category>
+		</Include>
+	</Menu>
+</Menu>

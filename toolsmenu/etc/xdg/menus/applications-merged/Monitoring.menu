@@ -1,0 +1,12 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+"http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<Menu>
+	<Name>Xfce</Name>
+	<Menu>
+	<Name>05 - Monitoring Tools</Name>
+		<Directory>monitoring.directory</Directory>
+		<Include>
+			<Category>monitoring</Category>
+		</Include>
+	</Menu>
+</Menu>

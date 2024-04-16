@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# check shell
+if [ -d /usr/bin ];then
+  platform="/usr/share"
+elif [ -d /data/data/com.termux/files/usr/share ];then
+  platform="/data/data/com.termux/files/usr/share"
+else
+  echo "[!] platform tidak diketahui"
+  exit
+fi
+
+# get list categories
+if [ ! -f $platform/tools-menu/list-category ];then
+  echo "file <[$platform/tools-menu/list-category]> tidak ditemukan"
+  exit
+fi
+
+# method create launcher
+create_launcher(){
+  if [ -f $HOME/.local/share/applications/$1.desktop ];then
+    echo "[!] judul sudah digunakan"
+    exit
+  fi
+  cat >> $HOME/.local/share/applications/$1.desktop <<- OEM
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=$1
+Comment=
+Exec=/usr/share/tools-menu/exec-in-shell "$3"
+Icon=$4
+Categories=$2;
+Terminal=true
+StartupNotify=false
+Path=
+OEM
+}
+
+# options
+if [ $1 ] && [ $2 ] && [ "$3" ] && [ -z "$5" ];then
+  for i in $(cat $platform/tools-menu/list-category);do
+    if [[ $2 == $i ]];then
+      if [ $4 ] && [ -f $4 ];then
+        cp $4 $HOME/.local/share/icons/hicolor/scalable/apps
+      fi
+      create_launcher $1 $2 $3 $4; exit
+    fi
+  done
+  echo "[!] tidak diketahui kategories"
+elif [[ $1 == "-c" ]] && [ -z "$2" ];then
+  echo "[category]"
+  cat /usr/share/tools-menu/list-category
+elif [[ $1 == "-l" ]] && [ -z "$2" ];then
+  echo "[judul]"
+  ls $HOME/.local/share/applications | cut -d '.' -f 1
+elif [[ $1 == "-d" ]] && [ $2 ];then
+  if [ -f $HOME/.local/share/applications/$2.desktop ];then
+    rm $HOME/.local/share/applications/apps/$2.desktop
+  else
+    echo "usage : toolsmenu -d [judul]"
+  fi
+else
+  echo "
+usage :
+  toolsmenu [new_judul] [kategories] [command] [nama_logo]
+  toolsmenu [options] [judul]
+    
+options :
+-c		list category
+-l		list launcher
+-d		delete launcher
+"
+fi

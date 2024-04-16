@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=tools menu
+Comment=create launcher
+Exec=/usr/share/tools-menu/exec-in-shell "toolsmenu"
+Icon=tools-menu
+Categories=information;data;scanner;attack;monitoring;
+Terminal=true
+StartupNotify=false
+Path=
