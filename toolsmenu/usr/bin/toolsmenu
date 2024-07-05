@@ -2,8 +2,10 @@
 
 # check shell
 if [ -d /usr/bin ];then
+  os="/usr/bin"
   platform="/usr/share"
 elif [ -d /data/data/com.termux/files/usr/share ];then
+  os="/data/data/com.termux/files/usr/bin"
   platform="/data/data/com.termux/files/usr/share"
 else
   echo "[!] platform tidak diketahui"
@@ -44,29 +46,69 @@ if [ $1 ] && [ $2 ] && [ "$3" ] && [ -z "$5" ];then
       if [ $4 ] && [ -f $4 ];then
         cp $4 $HOME/.local/share/icons/hicolor/scalable/apps
       fi
-      create_launcher $1 $2 $3 $4; exit
+      create_launcher $1 $2 "$3" "$4"; exit
     fi
   done
   echo "[!] tidak diketahui kategories"
 elif [[ $1 == "-c" ]] && [ -z "$2" ];then
-  echo "[category]"
   cat /usr/share/tools-menu/list-category
 elif [[ $1 == "-l" ]] && [ -z "$2" ];then
   echo "[judul]"
   ls $HOME/.local/share/applications | cut -d '.' -f 1
-elif [[ $1 == "-d" ]] && [ $2 ];then
+elif [[ $1 == "-d" ]] && [ $2 ] && [ -z "$3" ];then
   if [ -f $HOME/.local/share/applications/$2.desktop ];then
     rm $HOME/.local/share/applications/$2.desktop
   else
     echo "usage : toolsmenu -d [judul]"
   fi
+elif [[ $1 == "-r" ]] && [ -z "$2" ];then
+  arrbin=( $(ls $os) )
+  arrsbin=( $(ls /sbin) )
+  arrexec=( ${arrbin[@]} ${arrsbin[@]} )
+  red="\e[0;31m"
+  green="\e[0;32m"
+  white="\e[0;0m"
+  nmr=1
+  for gbin in ${arrexec[@]};do
+    if [ -f $HOME/.local/share/applications/$gbin.desktop ] || [ -f $platform/applications/$gbin.desktop ];then
+      echo -e "[ $gbin ] ...... [$green done $white]"
+    else
+      toolsmenu $gbin information "$gbin --help"
+      echo -e "[ $gbin ] ...... [ $red proccess $white]"
+    fi
+    ((nmr++))
+  done
+  echo "[ total cmds ] ...... [$nmr]"
+  unset nmr
+elif [[ $1 == "-k" ]] && [ -z "$2" ];then
+  cd $HOME/.local/share/applications
+  for laun in $(ls $HOME/.local/share/applications);do
+    if [ -f $platform/applications/$laun ];then
+      rm $laun
+      echo "[ delete ] ..... [ $laun ]"
+    fi
+  done
+  echo "[ delete ] ...... [ done ]"
+elif [[ $1 == "-e" ]] && [ -z "$3" ];then
+  if [ -z $2 ];then
+    echo "usage : toolsmenu -e <[launcher]>"; exit
+  fi
+  for g in $(ls $HOME/.local/share/applications);do
+    if [[ "$2.desktop" == $g ]];then
+      nano $HOME/.local/share/applications/$g; exit
+    fi
+  done
+  echo "! launcher <[$2]> unknown"
 else
   echo "
 usage :
-  toolsmenu [new_judul] [kategories] [command] [nama_logo]
-  toolsmenu [options] [judul]
+  toolsmenu [new_launcher] [category] [command] [nama_logo]
+  toolsmenu [options] [launcher_name]
     
 options :
+-e		edit launcher
+-k		clear double launcher
+-r		reload launcher
 -c		list category
 -l		list launcher
 -d		delete launcher

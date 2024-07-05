@@ -1,5 +1,21 @@
+[ categories custom ]
 information
 data
 scanner
 attack
 monitoring
+
+[ categories xfce4 ]
+Settings
+Accessibility
+Development
+Games
+Graphics
+Audio
+Video
+AudioVideo
+Network
+Office
+Science
+System
+Emulator
