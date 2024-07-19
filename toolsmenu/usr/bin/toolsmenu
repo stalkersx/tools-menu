@@ -61,25 +61,18 @@ elif [[ $1 == "-d" ]] && [ $2 ] && [ -z "$3" ];then
   else
     echo "usage : toolsmenu -d [judul]"
   fi
-elif [[ $1 == "-r" ]] && [ -z "$2" ];then
-  arrbin=( $(ls $os) )
-  arrsbin=( $(ls /sbin) )
-  arrexec=( ${arrbin[@]} ${arrsbin[@]} )
-  red="\e[0;31m"
-  green="\e[0;32m"
-  white="\e[0;0m"
-  nmr=1
-  for gbin in ${arrexec[@]};do
-    if [ -f $HOME/.local/share/applications/$gbin.desktop ] || [ -f $platform/applications/$gbin.desktop ];then
-      echo -e "[ $gbin ] ...... [$green done $white]"
-    else
-      toolsmenu $gbin information "$gbin --help"
-      echo -e "[ $gbin ] ...... [ $red proccess $white]"
-    fi
-    ((nmr++))
-  done
-  echo "[ total cmds ] ...... [$nmr]"
-  unset nmr
+elif [[ $1 == "-r" ]] && [ -z "$3" ];then
+  if [ -z "$2" ];then
+    echo "usage : toolsmenu -r <[command_exec]>"
+  else
+    for r in {1..20};do
+      if [ -f "$(echo $PATH | cut -d ':' -f $r)/$2" ];then
+        exec $platform/tools-menu/window-help.py "$($2 --help)" "$2"
+        exit
+      fi
+    done
+    echo "[ not found ] ..... [ $2 ]" 
+  fi
 elif [[ $1 == "-k" ]] && [ -z "$2" ];then
   cd $HOME/.local/share/applications
   for laun in $(ls $HOME/.local/share/applications);do
@@ -108,7 +101,7 @@ usage :
 options :
 -e		edit launcher
 -k		clear double launcher
--r		reload launcher
+-r		show monitor command help
 -c		list category
 -l		list launcher
 -d		delete launcher
